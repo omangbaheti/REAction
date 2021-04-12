@@ -8,23 +8,29 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     public LayerMask layers;
-    public Collider[] onGround;
+    public bool onGround;
+    
     [SerializeField] private float speed = 10f;
-    [SerializeField] private float jumpForce = 10f;
+    private Vector3 _movement;
+    
+    [SerializeField] private float jumpHeight = 10f;
+    [SerializeField] private float jumpCollisionRadius = 10f;
+    [SerializeField]private float gravity = -9.81f;
+    public Vector3 jumpVector;
+    private Vector3 playerVelocity;
+    
     [SerializeField] private float mouseSensitivity = 50f;
     [SerializeField] private float minCamAngleY = -70f, maxCamAngleY = 80f; 
-    [SerializeField] private float jumpCollisionRadius = 10f;
-    [SerializeField] private Vector3 bottomOffset = new Vector3(0, 1, 0);
-    //[SerializeField] private float minCamAngleX = -180f, maxCamAngleX = 180f;
-    private CharacterController _characterController;
-    private Camera _camera;
-    private Vector3 _movement;
-    private Vector3 _appliedGravity;
-    public Vector3 jumpVector;
-    private Vector2 _moveInput;
-
     private Vector2 _mouseMovement;
     private Vector2 _mouseDelta;
+    
+    [SerializeField] private Vector3 bottomOffset = new Vector3(0, 1, 0);
+    //[SerializeField] private float minCamAngleX = -180f, maxCamAngleX = 180f;
+    
+    private CharacterController _characterController;
+    private Camera _camera;
+    private Vector2 _moveInput;
+
     private float xRotation;
     private float yRotation;
     
@@ -43,8 +49,10 @@ public class Character : MonoBehaviour
     private void Update()
     {
         HandleGroundCollision();
+        
         //handles current movement via WASD
         _movement = (transform.forward * _moveInput.y + transform.right * _moveInput.x).normalized;
+        
         //handles current mouse input 
         _mouseMovement = _mouseDelta * (mouseSensitivity * Time.deltaTime);
         
@@ -53,27 +61,25 @@ public class Character : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, minCamAngleY, maxCamAngleY);
         _camera.transform.localRotation = Quaternion.Euler(xRotation,yRotation,0);
 
-        //Rotate player on the Y axis 
+        //Rotate player on the Y axis for horizontal camera movement
         transform.Rotate(Vector3.up * _mouseMovement.x);
         
     }
 
-    public void FixedUpdate()
+    private void FixedUpdate()
     {
-        //Apply Gravity
-        if (_characterController.isGrounded)
-        {
-            _appliedGravity.y = 0f;
-        }
-        else
-        {
-            _appliedGravity.y += -9.81f * Time.fixedDeltaTime;
-        }
-
-        _characterController.Move((_movement * speed  + _appliedGravity + jumpVector)*Time.fixedDeltaTime);
-        jumpVector.y = 0f;
-
+        //Player Movement
+        if (onGround && playerVelocity.y < 0)
+            playerVelocity.y = 0f;
+        
+        //Movement on the plane
+        _characterController.Move((_movement * (speed * Time.fixedDeltaTime)));
+        
+        //apply gravity
+        playerVelocity.y += gravity * Time.deltaTime;
+        _characterController.Move(playerVelocity * Time.fixedDeltaTime);
     }
+
 
     public void  OnMoveInput(Vector2 _move)
     {
@@ -82,13 +88,9 @@ public class Character : MonoBehaviour
 
     public void OnJumpInput(bool jumpEvent)
     {
-        if (onGround.Length > 0)
+        if (onGround)
         {
-            jumpVector = Vector3.up * jumpForce;
-        }
-        else
-        {
-            jumpVector = Vector3.zero;
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -2.0f * gravity);
         }
     }
 
@@ -100,7 +102,7 @@ public class Character : MonoBehaviour
 
     private void HandleGroundCollision()
     {
-        onGround = Physics.OverlapSphere(transform.position + bottomOffset, jumpCollisionRadius, layers);
+        onGround = Physics.CheckSphere(transform.position + bottomOffset, jumpCollisionRadius, layers);
     }
     
     void OnDrawGizmos()
