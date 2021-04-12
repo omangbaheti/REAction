@@ -52,7 +52,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": ""Look"",
-                    ""type"": ""Value"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""b253db6a-dd71-48f0-9f3f-59a56a66f300"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
