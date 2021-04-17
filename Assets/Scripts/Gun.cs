@@ -8,13 +8,11 @@ public class Gun : MonoBehaviour
     public Transform cam;
     public float force = 100f;
     private bool hasBopped;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public float hookRange = 10f;
+    public float dotThreshold = 0.9f;
+    public GameObject hook;
+    public int hookSpeed=10;
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -23,6 +21,13 @@ public class Gun : MonoBehaviour
             Bop();
             hasBopped = true;
             Invoke(nameof(CanBop),1f);
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            Hook();
+            //Debug.Log("I am pepega");
+            //Debug.Log(rb.transform);
         }
         
     }
@@ -36,12 +41,25 @@ public class Gun : MonoBehaviour
         if (!hasBopped)
         {
             Vector3 bop = -cam.forward;
-            //rb.velocity = Vector3.zero;
-            //Vector3 temp = transform.rotation.eulerAngles.x ;
-            //bop += transform.up * force *0.05f;
+            rb.velocity = Vector3.zero;
             rb.AddForce(bop * force);
         }
         
+    }
+
+    void Hook()
+    {
+        Transform hookPoint = GetHook();
+        Vector3 dirn = hookPoint.position- rb.transform.position;
+        rb.AddForce(dirn * hookSpeed);
+        
+    }
+
+    Transform GetHook()
+    {
+
+        Transform hookPoint = hook.gameObject.transform;
+        return hookPoint;
     }
 
 
