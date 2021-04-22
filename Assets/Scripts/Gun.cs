@@ -12,6 +12,8 @@ public class Gun : MonoBehaviour
     public float dotThreshold = 0.9f;
     public GameObject hook;
     public int hookSpeed=10;
+    private bool hooking = false;
+    Vector3 dirn;
 
     void Update()
     {
@@ -31,6 +33,15 @@ public class Gun : MonoBehaviour
         }
         
     }
+
+    private void FixedUpdate()
+    {
+        if (hooking)
+        {
+            rb.AddForce(dirn * hookSpeed);
+            Invoke(nameof(StopHook), 0.1f);
+        }
+    }
     bool CanBop()
     {
         hasBopped = false;
@@ -42,6 +53,7 @@ public class Gun : MonoBehaviour
         {
             Vector3 bop = -cam.forward;
             rb.velocity = Vector3.zero;
+            rb.AddForce(transform.up * hookSpeed * 0.1f);
             rb.AddForce(bop * force);
         }
         
@@ -50,16 +62,21 @@ public class Gun : MonoBehaviour
     void Hook()
     {
         Transform hookPoint = GetHook();
-        Vector3 dirn = hookPoint.position- rb.transform.position;
-        rb.AddForce(dirn * hookSpeed);
-        
+        dirn = (hookPoint.position- rb.transform.position);
+        dirn.Normalize();
+        rb.AddForce(transform.up*hookSpeed*0.1f);
+        hooking = true;
     }
 
     Transform GetHook()
     {
-
         Transform hookPoint = hook.gameObject.transform;
         return hookPoint;
+    }
+
+    void StopHook()
+    {
+        hooking = false;
     }
 
 
