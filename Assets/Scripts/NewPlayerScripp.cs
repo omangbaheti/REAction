@@ -45,9 +45,7 @@ public class NewPlayerScripp : MonoBehaviour
     private void Update()
     {
         HandleGroundCollision();
-        //MouseLook(mouseDelta);
-        Vector3 projectCameraForward = Vector3.ProjectOnPlane(_mainCam.transform.forward, Vector3.up);
-        rotationToCamera = Quaternion.LookRotation(projectCameraForward, Vector3.up);
+        MouseLook(mouseDelta);
         
         
     }
@@ -72,9 +70,12 @@ public class NewPlayerScripp : MonoBehaviour
         //Rotate camera on X axis (effectively moving it vertically)
         xRotation -= mouseMovement.y ;
         xRotation = Mathf.Clamp(xRotation, minCamAngleY, maxCamAngleY);
+
         yRotation += mouseMovement.x;
         
+        
         Vector3 projectCameraForward = Vector3.ProjectOnPlane(_mainCam.transform.forward, Vector3.up);
+        
         rotationToCamera = Quaternion.LookRotation(projectCameraForward, Vector3.up);
         
         //Rotate player on the Y axis for horizontal camera movements
@@ -135,7 +136,10 @@ public class NewPlayerScripp : MonoBehaviour
 
     }
 
-    
+    public void OnMouseUpdate(Vector2 _mouseInput)
+    {
+        mouseDelta = _mouseInput;
+    }
 
     public void OnJumpInput()
     {

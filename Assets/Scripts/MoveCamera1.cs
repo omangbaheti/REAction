@@ -1,38 +1,42 @@
-using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveCamera1 : MonoBehaviour {
-
-    public Transform player;
-    
-    [SerializeField] private float mouseSensitivity = 50f;
+public class MoveCamera1 : MonoBehaviour
+{
+    [SerializeField] private Transform orientation;
+    [SerializeField] private float sensitivity=50f;
     [SerializeField] private float minCamAngleY = -70f, maxCamAngleY = 80f;
-    [SerializeField] private Transform head;
-    private Vector3 moveInput;
+    
+    private float rotX;
+    private float rotY;
     private Vector2 mouseDelta;
-    private Quaternion rotationToCamera;
-    private Camera _mainCam;
-    private float xRotation;
-    private float yRotation;
 
-    private void Awake()
+
+    private void Start()
     {
-        _mainCam = Camera.main;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        
     }
 
-    void LateUpdate() {
-        Vector3 mouseMovement = mouseDelta * (mouseSensitivity * Time.deltaTime);
+    void Update()
+    {
+        Look();
+    }
+
+    private void Look()
+    {
         
-        //Rotate camera on X axis (effectively moving it vertically)
-        xRotation -= mouseMovement.y ;
-        xRotation = Mathf.Clamp(xRotation, minCamAngleY, maxCamAngleY);
-        yRotation += mouseMovement.x;
-        
-        Vector3 projectCameraForward = Vector3.ProjectOnPlane(_mainCam.transform.forward, Vector3.up);
-        rotationToCamera = Quaternion.LookRotation(projectCameraForward, Vector3.up);
-        
-        //Rotate player on the Y axis for horizontal camera movements
-        head.transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
+        rotY += mouseDelta.x * sensitivity * Time.deltaTime;
+        rotX += mouseDelta.y * sensitivity * Time.deltaTime;
+
+        rotX = Mathf.Clamp(rotX, minCamAngleY, maxCamAngleY);
+
+        transform.rotation = Quaternion.Euler(-rotX, rotY, 0.0f);
+        orientation.transform.rotation = Quaternion.Euler(0, rotY, 0);
+
     }
     
     public void OnMouseUpdate(Vector2 _mouseInput)

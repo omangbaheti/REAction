@@ -4,14 +4,10 @@ using UnityEngine;
 
 public class TheLook : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject playerCam;
-    [SerializeField]
-    private GameObject orientation;
-    [SerializeField]
-    private float sensitivity=50f;
-    [SerializeField]
-    private float clampAngle =80f;
+    [SerializeField] private GameObject playerCam;
+    [SerializeField] private GameObject orientation;
+    [SerializeField] private float sensitivity=50f;
+    [SerializeField] private float minCamAngleY = -70f, maxCamAngleY = 80f;
     
     private float rotX;
     private float rotY;
@@ -36,7 +32,7 @@ public class TheLook : MonoBehaviour
         rotY += mouseX;
         rotX += mouseY;
 
-        rotX = Mathf.Clamp(rotX, -clampAngle, clampAngle);
+        rotX = Mathf.Clamp(rotX, minCamAngleY, maxCamAngleY);
 
         playerCam.transform.rotation = Quaternion.Euler(-rotX, rotY, 0.0f);
         orientation.transform.rotation = Quaternion.Euler(0, rotY, 0);
