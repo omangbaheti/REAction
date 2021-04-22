@@ -55,6 +55,6 @@ public class InputController : MonoBehaviour
     
     private void OnDisable()
     {
-        controls.GroundMovement.Disable();
+            controls.GroundMovement.Disable();
     }
 }
