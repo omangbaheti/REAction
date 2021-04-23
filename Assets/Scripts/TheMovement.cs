@@ -77,12 +77,13 @@ public class TheMovement : MonoBehaviour
     {
         if (isGrounded)
         { 
+            cooledDown = false;
+            Invoke(nameof(ShootCooldown), 0.2f);
             _rigidbody.AddForce(Vector3.up * jumpForce);
-            
         }
     }
 
-    void shootCooldown()
+    void ShootCooldown()
     {
         cooledDown = true;
     }
@@ -90,10 +91,9 @@ public class TheMovement : MonoBehaviour
     public void OnShoot(bool _shoot)
     {
         
-        if (hasShot ) return;
+        if (hasShot||!cooledDown) return;
         
-        if(isGrounded)
-            _rigidbody.velocity=Vector3.zero;
+        if (isGrounded) _rigidbody.velocity=Vector3.zero;
         
         _rigidbody.AddForce(-1 * _mainCam.transform.forward * recoilForce );
         hasShot = true;

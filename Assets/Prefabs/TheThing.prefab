@@ -40,6 +40,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4526933734437136028}
   - component: {fileID: 4526933734437136029}
+  - component: {fileID: 1745077043}
   m_Layer: 0
   m_Name: TheCamera
   m_TagString: Untagged
@@ -77,8 +78,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCam: {fileID: 4526933734437136031}
   orientation: {fileID: 4526933735635858927}
-  sensitivity: 100
-  clampAngle: 80
+  sensitivity: 500
+  minCamAngleY: -70
+  maxCamAngleY: 80
+--- !u!114 &1745077043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4526933734437136031}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf79c2327f460b46a570052009bcc8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orientation: {fileID: 4526933735635858924}
+  sensitivity: 50
+  minCamAngleY: -70
+  maxCamAngleY: 80
 --- !u!1 &4526933734466469961
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,8 +124,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4526933734466469961}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.84, z: 0}
+  m_LocalScale: {x: 1, y: 1.3, z: 1}
   m_Children:
   - {fileID: 4526933735619740164}
   - {fileID: 4526933734593948695}
@@ -127,8 +145,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f179cf72bc841840a00d1748abc5e68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extraGrav: 10
-  rb: {fileID: 4526933735619740165, guid: e415e51c67ea35446a99dbdd6ebffab5, type: 3}
+  layers:
+    serializedVersion: 2
+    m_Bits: 256
+  bottomOffset: {x: 0, y: -1.45, z: 0}
+  jumpForce: 550
+  maxSpeed: 15
+  jumpCollisionRadius: 0.24
+  recoilForce: 1000
+  isGrounded: 0
+  cooledDown: 0
+  hasShot: 0
 --- !u!54 &117726168
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -183,7 +210,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4526933734593948694}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.78, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4526933734466469958}
@@ -214,7 +241,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4526933734753621736}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.8540001, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4526933735139303629}
