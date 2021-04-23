@@ -8,9 +8,12 @@ public class TheMovement : MonoBehaviour
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private float maxSpeed = 100f;
     [SerializeField] private float jumpCollisionRadius  = 0.1f;
-
+    [SerializeField] private float recoilForce = 100f;
+    
 
     public bool isGrounded;
+    public bool cooledDown;
+    public bool hasShot=false;
     private Vector3 moveInput;
     private Vector2 mouseDelta;
     private Quaternion rotationToCamera;
@@ -62,9 +65,6 @@ public class TheMovement : MonoBehaviour
     {
         isGrounded = Physics.CheckSphere(transform.position + bottomOffset, jumpCollisionRadius, layers);
     }
-
-    
-
     
     //*******************************HANDLE INPUT*******************************
     
@@ -73,13 +73,37 @@ public class TheMovement : MonoBehaviour
         moveInput = new Vector3(_move.x, 0f, _move.y).normalized;
 
     }
-
     public void OnJumpInput(bool _jump)
     {
-        if(isGrounded)
-        _rigidbody.AddForce(Vector3.up * jumpForce);
+        if (isGrounded)
+        { 
+            _rigidbody.AddForce(Vector3.up * jumpForce);
+            
+        }
     }
-    
+
+    void shootCooldown()
+    {
+        cooledDown = true;
+    }
+
+    public void OnShoot(bool _shoot)
+    {
+        
+        if (hasShot ) return;
+        
+        if(isGrounded)
+            _rigidbody.velocity=Vector3.zero;
+        
+        _rigidbody.AddForce(-1 * _mainCam.transform.forward * recoilForce );
+        hasShot = true;
+        Invoke(nameof(CanShoot),1f);
+        //Debug.Log("pow");
+    }
+    void CanShoot()
+    {
+        hasShot = false;
+    }
     //*******************************GIZMOS*******************************
     void OnDrawGizmos()
     {

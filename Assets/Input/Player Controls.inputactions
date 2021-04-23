@@ -22,26 +22,18 @@
                     "interactions": ""
                 },
                 {
-                    "name": "MouseX",
-                    "type": "PassThrough",
-                    "id": "4391bf09-099e-47f4-a911-322f23c769cb",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "MouseY",
-                    "type": "PassThrough",
-                    "id": "14183054-b4df-4ac9-a499-0d50cdcf1ebb",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
                     "name": "Look",
                     "type": "PassThrough",
                     "id": "b253db6a-dd71-48f0-9f3f-59a56a66f300",
                     "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Shoot",
+                    "type": "Button",
+                    "id": "a30f08a7-ec76-4b47-8a59-b3c75902663b",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
                 }
@@ -115,34 +107,34 @@
                 },
                 {
                     "name": "",
-                    "id": "64301be3-9a50-4f0e-922c-0a133ac4fe04",
-                    "path": "<Mouse>/delta/x",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MouseX",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "330dd16e-011e-4c67-8ccd-b7385f6f6227",
-                    "path": "<Mouse>/delta/y",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MouseY",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "f10e0fbc-cb9a-4545-8b63-e6ce55e6f215",
                     "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "194499d0-3d98-43b6-ba1a-3b49dff3f1a3",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7cf74f81-e897-4bec-88f1-9b757b4e7561",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

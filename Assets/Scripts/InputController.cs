@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 [Serializable] public class MoveInputEvent: UnityEvent<Vector2> { }
 [Serializable] public class JumpInputEvent: UnityEvent<bool> { }
 [Serializable] public class MouseInputEvent: UnityEvent<Vector2>{ }
+[Serializable] public class ShootInputEvent: UnityEvent<bool>{ }
 public class InputController : MonoBehaviour
 {
     
@@ -15,6 +16,7 @@ public class InputController : MonoBehaviour
     public MoveInputEvent moveInputEvent;
     public JumpInputEvent jumpInputEvent;
     public MouseInputEvent mouseInputEvent;
+    public ShootInputEvent shootInputEvent;
     private void Awake()
     {
         controls = new PlayerControls();
@@ -30,10 +32,12 @@ public class InputController : MonoBehaviour
         controls.GroundMovement.Look.performed += MouseMove;
         controls.GroundMovement.HorizontalMovement.performed += OnMove;
         controls.GroundMovement.Jump.performed += OnJump;
+        controls.GroundMovement.Shoot.performed += OnShoot;
         
         //Step3: Cancel the Horizontal movement so that the vector is not stuck to the previous value (eg (0,1))
         controls.GroundMovement.HorizontalMovement.canceled -= OnMove;
         controls.GroundMovement.Jump.canceled -= OnJump;
+        //controls.GroundMovement.Shoot.canceled -= OnShoot;
     }
 
     private void MouseMove(InputAction.CallbackContext context)
@@ -53,8 +57,14 @@ public class InputController : MonoBehaviour
         moveInputEvent.Invoke(moveInput);
     }
     
+    private void OnShoot(InputAction.CallbackContext context)
+    {
+        shootInputEvent.Invoke(true);
+        
+    }
+    
     private void OnDisable()
     {
-            controls.GroundMovement.Disable();
+        controls.GroundMovement.Disable();
     }
 }
