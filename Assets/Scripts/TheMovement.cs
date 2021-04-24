@@ -9,10 +9,14 @@ public class TheMovement : MonoBehaviour
     [SerializeField] private float maxSpeed = 100f;
     [SerializeField] private float jumpCollisionRadius  = 0.1f;
     [SerializeField] private float recoilForce = 100f;
+    [SerializeField] private float airControl=3f;
+    [SerializeField] private float moveForce = 3f;
+    
+    [SerializeField] private GameObject orientation;
     
 
     public bool isGrounded;
-    public bool cooledDown;
+    public bool cantShoot;
     public bool hasShot=false;
     private Vector3 moveInput;
     private Vector2 mouseDelta;
@@ -20,6 +24,8 @@ public class TheMovement : MonoBehaviour
     
     private Rigidbody _rigidbody;
     private Camera _mainCam;
+    private bool cantJump=false;
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
@@ -30,24 +36,25 @@ public class TheMovement : MonoBehaviour
     {
         HandleGroundCollision();
         Vector3 projectCameraForward = Vector3.ProjectOnPlane(_mainCam.transform.forward, Vector3.up);
-        rotationToCamera = Quaternion.LookRotation(projectCameraForward, Vector3.up);
+        rotationToCamera = Quaternion.LookRotation(orientation.transform.forward, Vector3.up);
     }
 
     private void FixedUpdate()
     {
-        ApplyForceToReachVelocity(_rigidbody, rotationToCamera *  moveInput *  maxSpeed );
+        float effectiveMoveForce = moveForce;
+        if (!isGrounded) effectiveMoveForce/=airControl;
+        ApplyForceToReachVelocity(_rigidbody, rotationToCamera *  moveInput *  maxSpeed, effectiveMoveForce );
     }
     
-    public static void ApplyForceToReachVelocity(Rigidbody rigidbody, Vector3 velocity, float force = 3, ForceMode mode = ForceMode.Force)
+    public void ApplyForceToReachVelocity(Rigidbody rigidbody, Vector3 velocity, float force = 3, ForceMode mode = ForceMode.Force)
     {
-        if (force == 0 || velocity.magnitude == 0)
+        if (Mathf.Approximately(force , 0) || Mathf.Approximately(velocity.magnitude , 0))
             return;
 
-        velocity = velocity + velocity.normalized * 0.2f * rigidbody.drag;
+        velocity += velocity.normalized * (0.2f * rigidbody.drag);
 
         //force = 1 => need 1 s to reach velocity (if mass is 1) => force can be max 1 / Time.fixedDeltaTime
-        force = Mathf.Clamp(force, -rigidbody.mass / Time.fixedDeltaTime,
-                                        rigidbody.mass / Time.fixedDeltaTime);
+        force = Mathf.Clamp(force, -rigidbody.mass / Time.fixedDeltaTime,rigidbody.mass / Time.fixedDeltaTime);
 
         //dot product is a projection from rhs to lhs with a length of result / lhs.magnitude https://www.youtube.com/watch?v=h0NJK4mEIJU
         if (rigidbody.velocity.magnitude == 0)
@@ -69,36 +76,44 @@ public class TheMovement : MonoBehaviour
     //*******************************HANDLE INPUT*******************************
     
     public void OnMoveInput(Vector2 _move)
-    {
-        moveInput = new Vector3(_move.x, 0f, _move.y).normalized;
-
+    { 
+        moveInput = new Vector3(_move.x, 0f, _move.y).normalized;  
+        
     }
     public void OnJumpInput(bool _jump)
     {
-        if (isGrounded)
-        { 
-            cooledDown = false;
-            Invoke(nameof(ShootCooldown), 0.2f);
-            _rigidbody.AddForce(Vector3.up * jumpForce);
-        }
+        if (!isGrounded||cantJump) return;
+        
+        cantShoot = true;
+        Invoke(nameof(ShootCd), 0.2f);
+        _rigidbody.AddForce(Vector3.up * jumpForce);
+        
     }
 
-    void ShootCooldown()
+    void ShootCd()
     {
-        cooledDown = true;
+        cantShoot = false;
+    }
+
+    void JumpCd()
+    {
+        cantJump = false;
     }
 
     public void OnShoot(bool _shoot)
     {
         
-        if (hasShot||!cooledDown) return;
+        if (hasShot||cantShoot) return;
         
-        if (isGrounded) _rigidbody.velocity=Vector3.zero;
+        cantJump = true;
+        Invoke(nameof(JumpCd), 0.2f);
+
+        _rigidbody.velocity=Vector3.zero;
         
         _rigidbody.AddForce(-1 * _mainCam.transform.forward * recoilForce );
         hasShot = true;
         Invoke(nameof(CanShoot),1f);
-        //Debug.Log("pow");
+        
     }
     void CanShoot()
     {
@@ -107,8 +122,8 @@ public class TheMovement : MonoBehaviour
     //*******************************GIZMOS*******************************
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        var positions = new Vector3[] { bottomOffset};
+        Gizmos.color = Color.green;
+        var positions = new Vector3[] {bottomOffset};
         Gizmos.DrawWireSphere(transform.position + bottomOffset, jumpCollisionRadius);
     }
 }
