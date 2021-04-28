@@ -4,27 +4,35 @@ using UnityEngine;
 public class TheMovement : MonoBehaviour
 {
     public LayerMask layers;
-    [SerializeField] private Vector3 bottomOffset;
-    [SerializeField] private float jumpForce = 10f;
+    [SerializeField] private Transform orientation;
+    
+    [Header("Movement Parameters")]
     [SerializeField] private float maxSpeed = 100f;
-    [SerializeField] private float jumpCollisionRadius  = 0.1f;
     [SerializeField] private float recoilForce = 100f;
-    [SerializeField] private float airControl=3f;
     [SerializeField] private float moveForce = 3f;
     
-    [SerializeField] private GameObject orientation;
     
-
+    [Header("Current Status")]
     public bool isGrounded;
     public bool cantShoot;
     public bool hasShot=false;
+    
+    [Header(("Jump parameters"))]
+    [SerializeField] private float jumpForce = 10f;
+    [SerializeField] private float jumpCollisionRadius  = 0.1f;
+    [SerializeField] private float airControl=3f;
+    [SerializeField] private Vector3 bottomOffset;
+    
+    
     private Vector3 moveInput;
     private Vector2 mouseDelta;
     private Quaternion rotationToCamera;
+    private RaycastHit projectOnGround;
+    
     
     private Rigidbody _rigidbody;
     private Camera _mainCam;
-    private bool cantJump=false;
+    private bool cantJump = false;
 
     private void Awake()
     {
@@ -32,21 +40,24 @@ public class TheMovement : MonoBehaviour
         _mainCam = Camera.main;
     }
 
-    void Update()
+    private void Update()
     {
         HandleGroundCollision();
         Vector3 projectCameraForward = Vector3.ProjectOnPlane(_mainCam.transform.forward, Vector3.up);
-        rotationToCamera = Quaternion.LookRotation(orientation.transform.forward, Vector3.up);
+        projectOnGround = OnSlope();
+        rotationToCamera = Quaternion.LookRotation(orientation.forward, projectOnGround.normal);
+
     }
 
     private void FixedUpdate()
     {
         float effectiveMoveForce = moveForce;
-        if (!isGrounded) effectiveMoveForce/=airControl;
-        ApplyForceToReachVelocity(_rigidbody, rotationToCamera *  moveInput *  maxSpeed, effectiveMoveForce );
+        if (!isGrounded) effectiveMoveForce = moveForce / airControl;
+        Vector3 movement = rotationToCamera * moveInput * maxSpeed;
+        ApplyForceToReachVelocity(_rigidbody, movement, effectiveMoveForce );
     }
     
-    public void ApplyForceToReachVelocity(Rigidbody rigidbody, Vector3 velocity, float force = 3, ForceMode mode = ForceMode.Force)
+    private void ApplyForceToReachVelocity(Rigidbody rigidbody, Vector3 velocity, float force = 1.5f, ForceMode mode = ForceMode.Force)
     {
         if (Mathf.Approximately(force , 0) || Mathf.Approximately(velocity.magnitude , 0))
             return;
@@ -72,7 +83,22 @@ public class TheMovement : MonoBehaviour
     {
         isGrounded = Physics.CheckSphere(transform.position + bottomOffset, jumpCollisionRadius, layers);
     }
-    
+
+    private RaycastHit OnSlope()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out var rayCastToGround, 5f))
+        {
+            if (rayCastToGround.normal != Vector3.up)
+            {
+                return rayCastToGround;
+            }
+        }
+
+        return rayCastToGround;
+    }
+
+
+
     //*******************************HANDLE INPUT*******************************
     
     public void OnMoveInput(Vector2 _move)
@@ -119,10 +145,14 @@ public class TheMovement : MonoBehaviour
     {
         hasShot = false;
     }
+
+    
+    
+    
     //*******************************GIZMOS*******************************
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
+        Gizmos.color = Color.red;
         var positions = new Vector3[] {bottomOffset};
         Gizmos.DrawWireSphere(transform.position + bottomOffset, jumpCollisionRadius);
     }
