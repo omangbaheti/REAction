@@ -1,51 +1,55 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TheMovement : MonoBehaviour
 {
-    public LayerMask layers;
-    [SerializeField] private Transform orientation;
-    
     [Header("Movement Parameters")]
     [SerializeField] private float maxSpeed = 100f;
+
     [SerializeField] private float recoilForce = 100f;
     [SerializeField] private float moveForce = 3f;
-    
-    
+
     [Header("Current Status")]
     public bool isGrounded;
+
     public bool cantShoot;
-    public bool hasShot=false;
-    
+    public bool hasShot;
+
     [Header(("Jump parameters"))]
     [SerializeField] private float jumpForce = 10f;
+
     [SerializeField] private float jumpCollisionRadius  = 0.1f;
     [SerializeField] private float airControl=3f;
     [SerializeField] private Vector3 bottomOffset;
+
+    [Header((""))]
+    public LayerMask layers;
+    [SerializeField] private Transform orientation;
     
-    
-    private Vector3 moveInput;
-    private Vector2 mouseDelta;
-    private Quaternion rotationToCamera;
-    private RaycastHit projectOnGround;
-    
-    
+    private Vector3 _moveInput;
+    private Vector2 _mouseDelta;
+    private Quaternion _rotationToCamera;
+    private RaycastHit _projectOnGround;
+
+
     private Rigidbody _rigidbody;
     private Camera _mainCam;
-    private bool cantJump = false;
+    private bool _cantJump;
+    private float _mass;
 
     private void Awake()
     {
+        
         _rigidbody = GetComponent<Rigidbody>();
         _mainCam = Camera.main;
+        _mass = _rigidbody.mass;
     }
 
     private void Update()
     {
         HandleGroundCollision();
-        Vector3 projectCameraForward = Vector3.ProjectOnPlane(_mainCam.transform.forward, Vector3.up);
-        projectOnGround = OnSlope();
-        rotationToCamera = Quaternion.LookRotation(orientation.forward, projectOnGround.normal);
+        //Vector3 projectCameraForward = Vector3.ProjectOnPlane(_mainCam.transform.forward, Vector3.up);
+        _projectOnGround = OnSlope();
+        _rotationToCamera = Quaternion.LookRotation(orientation.forward, _projectOnGround.normal);
 
     }
 
@@ -53,29 +57,30 @@ public class TheMovement : MonoBehaviour
     {
         float effectiveMoveForce = moveForce;
         if (!isGrounded) effectiveMoveForce = moveForce / airControl;
-        Vector3 movement = rotationToCamera * moveInput * maxSpeed;
+        Vector3 movement = _rotationToCamera * _moveInput * maxSpeed;
         ApplyForceToReachVelocity(_rigidbody, movement, effectiveMoveForce );
     }
     
-    private void ApplyForceToReachVelocity(Rigidbody rigidbody, Vector3 velocity, float force = 1.5f, ForceMode mode = ForceMode.Force)
+    private void ApplyForceToReachVelocity(Rigidbody rb, Vector3 velocity, float force = 1.5f, ForceMode mode = ForceMode.Force)
     {
         if (Mathf.Approximately(force , 0) || Mathf.Approximately(velocity.magnitude , 0))
             return;
 
-        velocity += velocity.normalized * (0.2f * rigidbody.drag);
+        velocity += velocity.normalized * (0.2f * rb.drag);
 
         //force = 1 => need 1 s to reach velocity (if mass is 1) => force can be max 1 / Time.fixedDeltaTime
-        force = Mathf.Clamp(force, -rigidbody.mass / Time.fixedDeltaTime,rigidbody.mass / Time.fixedDeltaTime);
+        
+        force = Mathf.Clamp(force, -_mass / Time.fixedDeltaTime,_mass / Time.fixedDeltaTime);
 
         //dot product is a projection from rhs to lhs with a length of result / lhs.magnitude https://www.youtube.com/watch?v=h0NJK4mEIJU
-        if (rigidbody.velocity.magnitude == 0)
+        if (rb.velocity.magnitude == 0)
         {
-            rigidbody.AddForce(velocity * force, mode);
+            rb.AddForce(velocity * force, mode);
         }
         else
         {
-            var velocityProjectedToTarget = (velocity.normalized * Vector3.Dot(velocity, rigidbody.velocity) / velocity.magnitude);
-            rigidbody.AddForce((velocity - velocityProjectedToTarget) * force, mode);
+            var velocityProjectedToTarget = (velocity.normalized * Vector3.Dot(velocity, rb.velocity) / velocity.magnitude);
+            rb.AddForce((velocity - velocityProjectedToTarget) * force, mode);
         }
     }
     
@@ -101,14 +106,14 @@ public class TheMovement : MonoBehaviour
 
     //*******************************HANDLE INPUT*******************************
     
-    public void OnMoveInput(Vector2 _move)
+    public void OnMoveInput(Vector2 move)
     { 
-        moveInput = new Vector3(_move.x, 0f, _move.y).normalized;  
+        _moveInput = new Vector3(move.x, 0f, move.y).normalized;  
         
     }
-    public void OnJumpInput(bool _jump)
+    public void OnJumpInput(bool jump)
     {
-        if (!isGrounded||cantJump) return;
+        if (!isGrounded||_cantJump) return;
         
         cantShoot = true;
         Invoke(nameof(ShootCd), 0.2f);
@@ -123,20 +128,28 @@ public class TheMovement : MonoBehaviour
 
     void JumpCd()
     {
-        cantJump = false;
+        _cantJump = false;
     }
 
-    public void OnShoot(bool _shoot)
+    public void OnShoot(bool shoot)
     {
         
         if (hasShot||cantShoot) return;
         
-        cantJump = true;
+        _cantJump = true;
         Invoke(nameof(JumpCd), 0.2f);
 
-        _rigidbody.velocity=Vector3.zero;
-        
-        _rigidbody.AddForce(-1 * _mainCam.transform.forward * recoilForce );
+        Vector3 camAngle = _mainCam.transform.forward;
+
+        camAngle=camAngle.normalized;
+        Vector3 velocity = _rigidbody.velocity;
+        velocity = new Vector3(
+            velocity.x * (1 - Mathf.Abs(camAngle.x)),
+            velocity.y * (1 - Mathf.Abs(camAngle.y)), 
+            velocity.z * (1 - Mathf.Abs(camAngle.z)));
+        _rigidbody.velocity = velocity;
+
+        _rigidbody.AddForce(-1 * camAngle * recoilForce );
         hasShot = true;
         Invoke(nameof(CanShoot),1f);
         
@@ -146,14 +159,11 @@ public class TheMovement : MonoBehaviour
         hasShot = false;
     }
 
-    
-    
-    
     //*******************************GIZMOS*******************************
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        var positions = new Vector3[] {bottomOffset};
         Gizmos.DrawWireSphere(transform.position + bottomOffset, jumpCollisionRadius);
+        //var positions = new Vector3[] {bottomOffset};
     }
 }
