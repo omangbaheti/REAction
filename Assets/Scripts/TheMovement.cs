@@ -21,7 +21,7 @@ public class TheMovement : MonoBehaviour
     [SerializeField] private float airControl=3f;
     [SerializeField] private Vector3 bottomOffset;
 
-    [Header((""))]
+    [Header(("References"))]
     public LayerMask layers;
     [SerializeField] private Transform orientation;
     
@@ -35,7 +35,8 @@ public class TheMovement : MonoBehaviour
     private Camera _mainCam;
     private bool _cantJump;
     private float _mass;
-
+    private float groundAngle;
+    private Quaternion groundanglething;
     private void Awake()
     {
         
@@ -48,8 +49,10 @@ public class TheMovement : MonoBehaviour
     {
         HandleGroundCollision();
         //Vector3 projectCameraForward = Vector3.ProjectOnPlane(_mainCam.transform.forward, Vector3.up);
-        _projectOnGround = OnSlope();
-        _rotationToCamera = Quaternion.LookRotation(orientation.forward, _projectOnGround.normal);
+        OnSlope();
+        
+        //orientation.localRotation = Quaternion.Euler(orientation.localRotation.x, orientation.localRotation.y, orientation.localRotation.z+groundAngle);
+        _rotationToCamera = Quaternion.LookRotation(orientation.forward, Vector3.up);
 
     }
 
@@ -57,7 +60,7 @@ public class TheMovement : MonoBehaviour
     {
         float effectiveMoveForce = moveForce;
         if (!isGrounded) effectiveMoveForce = moveForce / airControl;
-        Vector3 movement = _rotationToCamera * _moveInput * maxSpeed;
+        Vector3 movement =_rotationToCamera * _moveInput * maxSpeed;
         ApplyForceToReachVelocity(_rigidbody, movement, effectiveMoveForce );
     }
     
@@ -89,17 +92,13 @@ public class TheMovement : MonoBehaviour
         isGrounded = Physics.CheckSphere(transform.position + bottomOffset, jumpCollisionRadius, layers);
     }
 
-    private RaycastHit OnSlope()
+    private void OnSlope()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out var rayCastToGround, 5f))
+        if (Physics.Raycast(transform.position, Vector3.down, out var rayCastToGround, 10f))
         {
-            if (rayCastToGround.normal != Vector3.up)
-            {
-                return rayCastToGround;
-            }
+            groundAngle = Vector3.Angle(Vector3.up, rayCastToGround.normal);
         }
-
-        return rayCastToGround;
+        
     }
 
 
