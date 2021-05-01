@@ -40,7 +40,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4526933734437136028}
   - component: {fileID: 4526933734437136029}
-  - component: {fileID: 1745077043}
   m_Layer: 0
   m_Name: TheCamera
   m_TagString: Untagged
@@ -79,24 +78,8 @@ MonoBehaviour:
   playerCam: {fileID: 4526933734437136031}
   orientation: {fileID: 4526933735635858927}
   sensitivity: 500
-  minCamAngleY: -70
-  maxCamAngleY: 80
---- !u!114 &1745077043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4526933734437136031}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abf79c2327f460b46a570052009bcc8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  orientation: {fileID: 4526933735635858924}
-  sensitivity: 50
-  minCamAngleY: -70
-  maxCamAngleY: 80
+  minCamAngleY: -90
+  maxCamAngleY: 90
 --- !u!1 &4526933734466469961
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,20 +144,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f179cf72bc841840a00d1748abc5e68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  layers:
-    serializedVersion: 2
-    m_Bits: 256
-  orientation: {fileID: 0}
-  maxSpeed: 15
-  recoilForce: 1000
-  moveForce: 3
+  maxSpeed: 20
+  recoilForce: 750
+  moveForce: 3.25
   isGrounded: 0
   cantShoot: 0
   hasShot: 0
   jumpForce: 550
   jumpCollisionRadius: 0.24
-  airControl: 3
+  airControl: 4
   bottomOffset: {x: 0, y: -1.45, z: 0}
+  layers:
+    serializedVersion: 2
+    m_Bits: 256
+  orientation: {fileID: 4526933735635858924}
 --- !u!136 &117726169
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -182,7 +165,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4526933734466469961}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 9a47cd43dc40dde42934613f0e091b3f, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
@@ -244,7 +227,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4526933734753621736}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.8539999, z: 0}
+  m_LocalPosition: {x: 0, y: 1.8540001, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4526933735139303629}
@@ -497,6 +480,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: InputController
       objectReference: {fileID: 0}
+    - target: {fileID: 8265413364255540982, guid: d6b133aa46b1c6b408212a4cbc01d144,
+        type: 3}
+      propertyPath: jumpInputEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4526933734466469959}
+    - target: {fileID: 8265413364255540982, guid: d6b133aa46b1c6b408212a4cbc01d144,
+        type: 3}
+      propertyPath: moveInputEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4526933734466469959}
+    - target: {fileID: 8265413364255540982, guid: d6b133aa46b1c6b408212a4cbc01d144,
+        type: 3}
+      propertyPath: shootInputEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4526933734466469959}
     - target: {fileID: 8265413364255540983, guid: d6b133aa46b1c6b408212a4cbc01d144,
         type: 3}
       propertyPath: m_RootOrder

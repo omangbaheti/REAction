@@ -29,6 +29,7 @@ public class TheMovement : MonoBehaviour
     private Vector2 _mouseDelta;
     private Quaternion _rotationToCamera;
     private RaycastHit _projectOnGround;
+    private Vector3 _thisWillFixShit;
 
 
     private Rigidbody _rigidbody;
@@ -50,26 +51,29 @@ public class TheMovement : MonoBehaviour
         HandleGroundCollision();
         //Vector3 projectCameraForward = Vector3.ProjectOnPlane(_mainCam.transform.forward, Vector3.up);
         OnSlope();
-        
-        //orientation.localRotation = Quaternion.Euler(orientation.localRotation.x, orientation.localRotation.y, orientation.localRotation.z+groundAngle);
-        _rotationToCamera = Quaternion.LookRotation(orientation.forward, Vector3.up);
 
+        
+        Vector3 targetVector = Quaternion.AngleAxis(groundAngle, Vector3.right) * orientation.forward;
+        Vector3 targetUpVector = _thisWillFixShit;
+        _rotationToCamera = Quaternion.Euler(orientation.rotation.eulerAngles.x- (2 * groundAngle), orientation.rotation.eulerAngles.y, orientation.rotation.eulerAngles.z);
+        Debug.Log(_rigidbody.velocity.magnitude);
     }
 
     private void FixedUpdate()
     {
+        _rigidbody.velocity = Vector3.ClampMagnitude(_rigidbody.velocity, maxSpeed/1.6f);
         float effectiveMoveForce = moveForce;
         if (!isGrounded) effectiveMoveForce = moveForce / airControl;
-        Vector3 movement =_rotationToCamera * _moveInput * maxSpeed;
+        Vector3 movement =_rotationToCamera.normalized * _moveInput * maxSpeed;
         ApplyForceToReachVelocity(_rigidbody, movement, effectiveMoveForce );
     }
     
-    private void ApplyForceToReachVelocity(Rigidbody rb, Vector3 velocity, float force = 1.5f, ForceMode mode = ForceMode.Force)
+    private void ApplyForceToReachVelocity(Rigidbody rb, Vector3 desiredVelocity, float force = 1.5f, ForceMode mode = ForceMode.Force)
     {
-        if (Mathf.Approximately(force , 0) || Mathf.Approximately(velocity.magnitude , 0))
+        if (Mathf.Approximately(force , 0) || Mathf.Approximately(desiredVelocity.magnitude , 0))
             return;
 
-        velocity += velocity.normalized * (0.2f * rb.drag);
+        desiredVelocity += desiredVelocity.normalized * (0.2f * rb.drag);
 
         //force = 1 => need 1 s to reach velocity (if mass is 1) => force can be max 1 / Time.fixedDeltaTime
         
@@ -78,12 +82,13 @@ public class TheMovement : MonoBehaviour
         //dot product is a projection from rhs to lhs with a length of result / lhs.magnitude https://www.youtube.com/watch?v=h0NJK4mEIJU
         if (rb.velocity.magnitude == 0)
         {
-            rb.AddForce(velocity * force, mode);
+            rb.AddForce(desiredVelocity * force, mode);
         }
         else
         {
-            var velocityProjectedToTarget = (velocity.normalized * Vector3.Dot(velocity, rb.velocity) / velocity.magnitude);
-            rb.AddForce((velocity - velocityProjectedToTarget) * force, mode);
+            Vector3 velocityProjectedToTarget = (desiredVelocity.normalized * Vector3.Dot(desiredVelocity, rb.velocity) / desiredVelocity.magnitude);
+            rb.AddForce((desiredVelocity - velocityProjectedToTarget) * force, mode);
+            
         }
     }
     
@@ -94,9 +99,10 @@ public class TheMovement : MonoBehaviour
 
     private void OnSlope()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out var rayCastToGround, 10f))
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit rayCastToGround, 10f))
         {
             groundAngle = Vector3.Angle(Vector3.up, rayCastToGround.normal);
+            _thisWillFixShit = rayCastToGround.normal;
         }
         
     }
