@@ -30,6 +30,7 @@ public class TheMovement : MonoBehaviour
     private Quaternion _rotationToCamera;
     private RaycastHit _projectOnGround;
     private Vector3 _thisWillFixShit;
+    private Vector2 mag;
 
 
     private Rigidbody _rigidbody;
@@ -49,24 +50,18 @@ public class TheMovement : MonoBehaviour
     private void Update()
     {
         HandleGroundCollision();
-        //Vector3 projectCameraForward = Vector3.ProjectOnPlane(_mainCam.transform.forward, Vector3.up);
-        OnSlope();
-
         
-        Vector3 targetVector = Quaternion.AngleAxis(groundAngle, Vector3.right) * orientation.forward;
-        Vector3 targetUpVector = _thisWillFixShit;
-        _rotationToCamera = Quaternion.Euler(orientation.rotation.eulerAngles.x- (2 * groundAngle), orientation.rotation.eulerAngles.y, orientation.rotation.eulerAngles.z);
-        Debug.Log(_rigidbody.velocity.magnitude);
+        _rotationToCamera = Quaternion.LookRotation(orientation.forward, Vector3.up);
     }
-
+    
     private void FixedUpdate()
     {
-        _rigidbody.velocity = Vector3.ClampMagnitude(_rigidbody.velocity, maxSpeed/1.6f);
         float effectiveMoveForce = moveForce;
         if (!isGrounded) effectiveMoveForce = moveForce / airControl;
-        Vector3 movement =_rotationToCamera.normalized * _moveInput * maxSpeed;
+        Vector3 movement = _rotationToCamera * _moveInput * maxSpeed;
         ApplyForceToReachVelocity(_rigidbody, movement, effectiveMoveForce );
     }
+
     
     private void ApplyForceToReachVelocity(Rigidbody rb, Vector3 desiredVelocity, float force = 1.5f, ForceMode mode = ForceMode.Force)
     {
@@ -90,23 +85,13 @@ public class TheMovement : MonoBehaviour
             rb.AddForce((desiredVelocity - velocityProjectedToTarget) * force, mode);
             
         }
+        
     }
     
     private void HandleGroundCollision()
     {
         isGrounded = Physics.CheckSphere(transform.position + bottomOffset, jumpCollisionRadius, layers);
     }
-
-    private void OnSlope()
-    {
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit rayCastToGround, 10f))
-        {
-            groundAngle = Vector3.Angle(Vector3.up, rayCastToGround.normal);
-            _thisWillFixShit = rayCastToGround.normal;
-        }
-        
-    }
-
 
 
     //*******************************HANDLE INPUT*******************************
@@ -122,7 +107,7 @@ public class TheMovement : MonoBehaviour
         
         cantShoot = true;
         Invoke(nameof(ShootCd), 0.2f);
-        _rigidbody.AddForce(Vector3.up * jumpForce);
+        _rigidbody.AddForce(0 , jumpForce,0f, ForceMode.Impulse);
         
     }
 
