@@ -77,7 +77,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCam: {fileID: 4526933734437136031}
   orientation: {fileID: 4526933735635858927}
-  sensitivity: 500
+  sensitivity: 300
   minCamAngleY: -90
   maxCamAngleY: 90
 --- !u!1 &4526933734466469961
@@ -150,9 +150,9 @@ MonoBehaviour:
   isGrounded: 0
   cantShoot: 0
   hasShot: 0
-  jumpForce: 550
+  jumpForce: 10
   jumpCollisionRadius: 0.24
-  airControl: 4
+  airControl: 3
   bottomOffset: {x: 0, y: -1.45, z: 0}
   layers:
     serializedVersion: 2
@@ -165,7 +165,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4526933734466469961}
-  m_Material: {fileID: 13400000, guid: 9a47cd43dc40dde42934613f0e091b3f, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5

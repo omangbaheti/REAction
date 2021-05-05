@@ -11190,24 +11190,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 117726169, guid: e415e51c67ea35446a99dbdd6ebffab5, type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4526933734437136029, guid: e415e51c67ea35446a99dbdd6ebffab5,
-        type: 3}
-      propertyPath: sensitivity
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 4526933734466469959, guid: e415e51c67ea35446a99dbdd6ebffab5,
-        type: 3}
-      propertyPath: maxSpeed
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4526933734466469959, guid: e415e51c67ea35446a99dbdd6ebffab5,
-        type: 3}
-      propertyPath: jumpForce
-      value: 10
+    - target: {fileID: 117726168, guid: e415e51c67ea35446a99dbdd6ebffab5, type: 3}
+      propertyPath: m_Drag
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4526933735470078330, guid: e415e51c67ea35446a99dbdd6ebffab5,
         type: 3}
