@@ -9,6 +9,7 @@ using UnityEngine.InputSystem;
 [Serializable] public class JumpInputEvent: UnityEvent<bool> { }
 [Serializable] public class MouseInputEvent: UnityEvent<Vector2>{ }
 [Serializable] public class ShootInputEvent: UnityEvent<bool>{ }
+[Serializable] public class HookShotEvent: UnityEvent<bool>{ }
 public class InputController : MonoBehaviour
 {
     
@@ -17,6 +18,9 @@ public class InputController : MonoBehaviour
     public JumpInputEvent jumpInputEvent;
     public MouseInputEvent mouseInputEvent;
     public ShootInputEvent shootInputEvent;
+    public HookShotEvent hookInputEvent;
+
+    private bool hookStatus = true;
     private void Awake()
     {
         controls = new PlayerControls();
@@ -33,10 +37,12 @@ public class InputController : MonoBehaviour
         controls.GroundMovement.HorizontalMovement.performed += OnMove;
         controls.GroundMovement.Jump.performed += OnJump;
         controls.GroundMovement.Shoot.performed += OnShoot;
+        controls.GroundMovement.HookShot.performed += OnHookEvent;
         
         //Step3: Cancel the Horizontal movement so that the vector is not stuck to the previous value (eg (0,1))
         controls.GroundMovement.HorizontalMovement.canceled -= OnMove;
         controls.GroundMovement.Jump.canceled -= OnJump;
+        controls.GroundMovement.HookShot.canceled -= OnHookEvent;
         //controls.GroundMovement.Shoot.canceled -= OnShoot;
     }
 
@@ -60,7 +66,13 @@ public class InputController : MonoBehaviour
     private void OnShoot(InputAction.CallbackContext context)
     {
         shootInputEvent.Invoke(true);
-        
+        hookInputEvent.Invoke(false);
+    }
+
+    private void OnHookEvent(InputAction.CallbackContext context)
+    {
+        //hookStatus = !hookStatus;
+        hookInputEvent.Invoke(hookStatus);
     }
     
     private void OnDisable()

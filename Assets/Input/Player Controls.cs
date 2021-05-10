@@ -49,6 +49,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""HookShot"",
+                    ""type"": ""Button"",
+                    ""id"": ""665099f6-c154-4a5f-8808-a0cb44cc9577"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -150,6 +158,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Shoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""97a6426d-8cbc-4c10-9e88-5c80fbcfa542"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HookShot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -162,6 +181,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_GroundMovement_Jump = m_GroundMovement.FindAction("Jump", throwIfNotFound: true);
         m_GroundMovement_Look = m_GroundMovement.FindAction("Look", throwIfNotFound: true);
         m_GroundMovement_Shoot = m_GroundMovement.FindAction("Shoot", throwIfNotFound: true);
+        m_GroundMovement_HookShot = m_GroundMovement.FindAction("HookShot", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -215,6 +235,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_GroundMovement_Jump;
     private readonly InputAction m_GroundMovement_Look;
     private readonly InputAction m_GroundMovement_Shoot;
+    private readonly InputAction m_GroundMovement_HookShot;
     public struct GroundMovementActions
     {
         private @PlayerControls m_Wrapper;
@@ -223,6 +244,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Jump => m_Wrapper.m_GroundMovement_Jump;
         public InputAction @Look => m_Wrapper.m_GroundMovement_Look;
         public InputAction @Shoot => m_Wrapper.m_GroundMovement_Shoot;
+        public InputAction @HookShot => m_Wrapper.m_GroundMovement_HookShot;
         public InputActionMap Get() { return m_Wrapper.m_GroundMovement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -244,6 +266,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Shoot.started -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnShoot;
                 @Shoot.performed -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnShoot;
                 @Shoot.canceled -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnShoot;
+                @HookShot.started -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnHookShot;
+                @HookShot.performed -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnHookShot;
+                @HookShot.canceled -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnHookShot;
             }
             m_Wrapper.m_GroundMovementActionsCallbackInterface = instance;
             if (instance != null)
@@ -260,6 +285,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Shoot.started += instance.OnShoot;
                 @Shoot.performed += instance.OnShoot;
                 @Shoot.canceled += instance.OnShoot;
+                @HookShot.started += instance.OnHookShot;
+                @HookShot.performed += instance.OnHookShot;
+                @HookShot.canceled += instance.OnHookShot;
             }
         }
     }
@@ -270,5 +298,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
+        void OnHookShot(InputAction.CallbackContext context);
     }
 }

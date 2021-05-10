@@ -36,6 +36,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "HookShot",
+                    "type": "Button",
+                    "id": "665099f6-c154-4a5f-8808-a0cb44cc9577",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -135,6 +143,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "97a6426d-8cbc-4c10-9e88-5c80fbcfa542",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HookShot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -90,8 +90,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4526933734466469958}
   - component: {fileID: 117726168}
-  - component: {fileID: 4526933734466469959}
   - component: {fileID: 117726169}
+  - component: {fileID: 4526933734466469959}
+  - component: {fileID: 7082243431843059804}
   m_Layer: 0
   m_Name: ThePlayer
   m_TagString: Untagged
@@ -132,6 +133,20 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!136 &117726169
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4526933734466469961}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4526933734466469959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,20 +173,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   orientation: {fileID: 4526933735635858924}
---- !u!136 &117726169
-CapsuleCollider:
+--- !u!114 &7082243431843059804
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4526933734466469961}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 879da41dc19e4264aa0c12971abc6e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HookRange: 10
+  layer:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &4526933734593948694
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,7 +244,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4526933734753621736}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.8540001, z: 0}
+  m_LocalPosition: {x: 0, y: 1.8539999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4526933735139303629}
