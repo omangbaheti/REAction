@@ -1,27 +1,24 @@
 ﻿using UnityEngine;
-
+//need to change the damn name of the class (aka refactor)
 public class TheMovement : MonoBehaviour
 {
     [Header("Movement Parameters")]
     [SerializeField] private float maxSpeed = 100f;
-
     [SerializeField] private float recoilForce = 100f;
     [SerializeField] private float moveForce = 3f;
 
     [Header("Current Status")]
     public bool isGrounded;
-
     public bool cantShoot;
     public bool hasShot;
 
-    [Header(("Jump parameters"))]
+    [Header("Jump parameters")]
     [SerializeField] private float jumpForce = 10f;
-
     [SerializeField] private float jumpCollisionRadius  = 0.1f;
     [SerializeField] private float airControl=3f;
     [SerializeField] private Vector3 bottomOffset;
 
-    [Header(("References"))]
+    [Header("References")]
     public LayerMask layers;
     [SerializeField] private Transform orientation;
     
@@ -29,28 +26,21 @@ public class TheMovement : MonoBehaviour
     private Vector2 _mouseDelta;
     private Quaternion _rotationToCamera;
     private RaycastHit _projectOnGround;
-    private Vector3 _thisWillFixShit;
-    private Vector2 mag;
-
-
     private Rigidbody _rigidbody;
-    private Camera _mainCam;
+    private Transform _mainCam;
     private bool _cantJump;
     private float _mass;
-    private float groundAngle;
-    private Quaternion groundanglething;
+    private float _groundAngle;
     private void Awake()
     {
-        
         _rigidbody = GetComponent<Rigidbody>();
-        _mainCam = Camera.main;
+        _mainCam = Camera.main.transform;
         _mass = _rigidbody.mass;
     }
 
     private void Update()
     {
         HandleGroundCollision();
-        
         _rotationToCamera = Quaternion.LookRotation(orientation.forward, Vector3.up);
     }
     
@@ -65,7 +55,7 @@ public class TheMovement : MonoBehaviour
     
     private void ApplyForceToReachVelocity(Rigidbody rb, Vector3 desiredVelocity, float force = 1.5f, ForceMode mode = ForceMode.Force)
     {
-        if (Mathf.Approximately(force , 0) || Mathf.Approximately(desiredVelocity.magnitude , 0))
+        if (Mathf.Approximately(force , 0f) || Mathf.Approximately(desiredVelocity.sqrMagnitude , 0))
             return;
 
         desiredVelocity += desiredVelocity.normalized * (0.2f * rb.drag);
@@ -75,7 +65,7 @@ public class TheMovement : MonoBehaviour
         force = Mathf.Clamp(force, -_mass / Time.fixedDeltaTime,_mass / Time.fixedDeltaTime);
 
         //dot product is a projection from rhs to lhs with a length of result / lhs.magnitude https://www.youtube.com/watch?v=h0NJK4mEIJU
-        if (rb.velocity.magnitude == 0)
+        if (rb.velocity.sqrMagnitude == 0)
         {
             rb.AddForce(desiredVelocity * force, mode);
         }
@@ -129,17 +119,16 @@ public class TheMovement : MonoBehaviour
         _cantJump = true;
         Invoke(nameof(JumpCd), 0.2f);
 
-        Vector3 camAngle = _mainCam.transform.forward;
-
-        camAngle=camAngle.normalized;
+        Vector3 camAngle = _mainCam.forward.normalized;
+        //I am proud of this shit fwak u
         Vector3 velocity = _rigidbody.velocity;
         velocity = new Vector3(
-            velocity.x * (1 - Mathf.Abs(camAngle.x)),
-            velocity.y * (1 - Mathf.Abs(camAngle.y)), 
-            velocity.z * (1 - Mathf.Abs(camAngle.z)));
+            velocity.x * (1f - Mathf.Abs(camAngle.x)),
+            velocity.y * (1f - Mathf.Abs(camAngle.y)), 
+            velocity.z * (1f - Mathf.Abs(camAngle.z)));
         _rigidbody.velocity = velocity;
 
-        _rigidbody.AddForce(-1 * camAngle * recoilForce );
+        _rigidbody.AddForce(-1f * camAngle * recoilForce );
         hasShot = true;
         Invoke(nameof(CanShoot),1f);
         
@@ -154,6 +143,5 @@ public class TheMovement : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position + bottomOffset, jumpCollisionRadius);
-        //var positions = new Vector3[] {bottomOffset};
     }
 }

@@ -1,18 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TheLook : MonoBehaviour
 {
     [SerializeField] private GameObject playerCam;
     [SerializeField] private GameObject orientation;
     [SerializeField] private float sensitivity=50f;
-    [SerializeField] private float minCamAngleY = -70f, maxCamAngleY = 80f;
+    [SerializeField] private float minCamAngleY = -70f; 
+    [SerializeField] private float maxCamAngleY = 80f;
     
-    private float rotX;
-    private float rotY;
-
-
+    private float _rotX;
+    private float _rotY;
+    
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -26,16 +24,13 @@ public class TheLook : MonoBehaviour
 
     private void Look()
     {
-        float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+        _rotY += Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+        _rotX += Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
 
-        rotY += mouseX;
-        rotX += mouseY;
-
-        rotX = Mathf.Clamp(rotX, minCamAngleY, maxCamAngleY);
-
-        playerCam.transform.rotation = Quaternion.Euler(-rotX, rotY, 0.0f);
-        orientation.transform.rotation = Quaternion.Euler(0, rotY, 0);
-
+        _rotX = Mathf.Clamp(_rotX, minCamAngleY, maxCamAngleY);
+        //fuck inverted people
+        //they do be kinda weird doe
+        playerCam.transform.rotation = Quaternion.Euler(-_rotX, _rotY, 0f);
+        orientation.transform.rotation = Quaternion.Euler(0f, _rotY, 0f);
     }
 }
