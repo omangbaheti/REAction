@@ -29,7 +29,7 @@ public class Hookshot : MonoBehaviour
     {
         if (hooking)
         {
-            handleHookMovement();
+            HandleHookMovement();
         }
     }
 
@@ -47,12 +47,12 @@ public class Hookshot : MonoBehaviour
         }
     }
 
-    void handleHookMovement()
+    void HandleHookMovement()
     {
         distanceToDestination = Vector3.Distance(transform.position, hitPosition);
         if (distanceToDestination<2f)
         {
-            Debug.Log("Your Destination is in front of you");
+            // Debug.Log("Your Destination is in front of you");
             hooking = false;
             return;
         }

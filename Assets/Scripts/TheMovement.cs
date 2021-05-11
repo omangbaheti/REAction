@@ -34,7 +34,7 @@ public class TheMovement : MonoBehaviour
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _mainCam = Camera.main.transform;
+        if (!(Camera.main is null)) _mainCam = Camera.main.transform;
         _mass = _rigidbody.mass;
     }
 
@@ -42,6 +42,8 @@ public class TheMovement : MonoBehaviour
     {
         HandleGroundCollision();
         _rotationToCamera = Quaternion.LookRotation(orientation.forward, Vector3.up);
+
+        
     }
     
     private void FixedUpdate()
@@ -97,7 +99,7 @@ public class TheMovement : MonoBehaviour
         
         cantShoot = true;
         Invoke(nameof(ShootCd), 0.2f);
-        _rigidbody.AddForce(0 , jumpForce,0f, ForceMode.Impulse);
+        _rigidbody.AddForce(0f , jumpForce,0f, ForceMode.Impulse);
         
     }
 
