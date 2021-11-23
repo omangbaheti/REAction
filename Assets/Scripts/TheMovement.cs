@@ -129,7 +129,7 @@ public class TheMovement : MonoBehaviour
             velocity.y * (1f - Mathf.Abs(camAngle.y)), 
             velocity.z * (1f - Mathf.Abs(camAngle.z)));
         _rigidbody.velocity = velocity;
-
+    
         _rigidbody.AddForce(-1f * camAngle * recoilForce );
         hasShot = true;
         Invoke(nameof(CanShoot),1f);
@@ -140,7 +140,7 @@ public class TheMovement : MonoBehaviour
         hasShot = false;
     }
 
-    //*******************************GIZMOS*******************************
+    
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

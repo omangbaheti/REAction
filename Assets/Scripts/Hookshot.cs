@@ -9,22 +9,38 @@ public class Hookshot : MonoBehaviour
     [SerializeField] private float HookRange;
     [SerializeField] private LayerMask layer;
     [SerializeField] private float force = 0.5f;
-    private Transform _camTransform;
-    [SerializeField]private Vector3 hitPosition;
-
+    [SerializeField] private Vector3 hitPosition;
     [SerializeField] private Transform debugPosition;
+    
+    private Transform _camTransform;
     private Rigidbody _rigidbody;
     private RaycastHit hookHit;
-
-
     public float distanceToDestination;
+
+    [Header("Rope Render Parameters")]
+    [SerializeField] private int ropeQuality;
+    [SerializeField] private AnimationCurve _curve;
+    [SerializeField] private float waveHeight;
+    [SerializeField] private float waveCount;
+    [SerializeField] private float ropeVelocity;
+    [SerializeField] private float strength;
+    [SerializeField] private float damper;
+    private LineRenderer _lineRenderer;
+    //private Spring _spring;
+    
+    
+    private void Awake()
+    {
+        _lineRenderer = GetComponent<LineRenderer>();
+        //_spring = new Spring();
+    }
+    
     void Start()
     {
         _camTransform = Camera.main.transform;
         _rigidbody = GetComponent<Rigidbody>();
     }
 
-    
     void Update()
     {
         if (hooking)
@@ -62,5 +78,9 @@ public class Hookshot : MonoBehaviour
         //_rigidbody.AddForce(hookShotDir * force, ForceMode.Impulse);
     }
     
-    
+    void DrawRope()
+    {
+        if(!hooking) return;
+        
+    }
 }
